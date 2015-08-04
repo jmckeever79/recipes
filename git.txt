@@ -1,0 +1,113 @@
+﻿	- Concepts
+		○ From gitreg.org: "If you think about Git as a tool for storing and comparing and merging snapshots of your project, it may be easier to understand what is going on and how to do things properly."
+		○ Primary file states
+			§ Committed
+				□ Data safely stored in local database
+			§ Modified
+				□ File changed but not committed to local database
+			§ Staged
+				□ Modified file is flagged to be included in next commit snapshot
+		○ Project sections
+			§ Git directory
+				□ Store for project metadata and object database
+				□ What is copied when a project is cloned
+			§ Working directory
+				□ Single checkout of one version of the project
+				□ Files pulled out of compressed database (from Git directory) and placed on local disk for modificaiton
+			§ Staging Area
+				□ File in Git directory containing information about what data will be included in next commit
+				□ Also known as an index
+		○ Tracked vs. untracked files
+			§ Tracked - any file present in last snapshot
+			§ Untracked - any other file in working directory
+		○ Repository
+			§ Collection of files tracked as a cohesive unit
+		○ Commit
+			§ A snapshot of a repository at a point in time
+				□ The snapshot is actually a tree
+		○ Blobs & Trees
+			§ Structures git uses to store content
+			§ Blob correspond to files, trees to directories
+			§ git creates trees from staging area/index
+		○ Branch
+			§ Pointer to the head of a line of work (see 'References')
+		○ References
+			§ Store the SHA1 associated with commits in named files so they can be referenced easily
+			§ Branch names
+		○ Internals (plumbing)
+			§ Overview of sequence of operations
+				□ Store blobs for changed files in database
+				□ Update the index (staging area)
+				□ Write trees from staging area
+				□ Write commit objects that reference top-level trees and commits that came immediate before them
+			§ The .git directory
+				□ objects directory
+					® Stores all of the content for the database
+				□ refs directory
+					® Stores pointers to branches in the database
+				□ HEAD
+					® Points to the branch currently checked out
+					® Usually does not contain an SHA1 but rather a pointer to a ref in the refs directory
+				□ index
+					® Stores staging area information
+			§ hash-object
+				□ git hash-object [-w] <--stdin|filename>
+					® -w tells git to actually store the data
+				□ Stores data in directory returns key assigned to data
+				□ The key is an SHA1 hash (acts as a checksum)
+			§ cat-file
+				□ git cat-file <-t> hash_signature
+					® -p prints contents of object associated with hash
+					® -t prints type of object associated with hash
+				□ Pull content back out of git
+				□ Critical for reverting to previous versions of files
+			§ git update-index [--add] [--cacheinfo] <mode> <SHA1> <filename>
+				□ Create an index
+				□ Stages a file for commit
+				□ Use --add if specified file does not exist yet
+				□ Use --cacheinfo if the file is in the database but not in the directory
+					® Don't fully understand database/directory distinction yet
+				□ Mode is limited to:
+					® 100644 - normal file
+					® 100755 - executable
+					® 120000 - symbolic link (a shortcut in Windows)
+			§ write-tree
+				□ Write the staging area into a tree object
+				□ Returns an SHA1
+			§ read-tree
+				□ git read-tree [--prefix=<prefix>] <SHA1>
+				□ Read a tree into your staging area
+			§ commit-tree
+				□ git commit-tree <SHA1> [-p <SHA1 of prior commit>]
+				□ Creates a Commit object
+				□ Comment for Commit can be passed in via a pipe
+				□ In order to build a git history, supply SHA1 of previous commits
+				
+	- Basic commands (porcelain)
+		○ git clone
+			§ Create a copy of a given repository
+		○ git --version
+			§ Display version we're using
+		○ Color code bash display
+			§ git config --global color.ui auto
+		○ git log [--stats] <SHA1>
+			§ View recent commits
+			§ --stats prints a summary of commit
+			§ --n <number> limits number of commits shown
+		○ git diff <commit1> <commit2>
+			§ View changes between commits
+			§ If color coding is turned, green represents added lines, red deleted lines
+			§ commit1 assumed to be original file(s), commit2 subsequent versions
+		○ git init
+			§ Make an existing directory into a git repository
+			§ The .git repository will be where the snapshots/commits are stored
+		○ git fetch [remote-name]
+			§ Pulls down data from a remote project
+			§ Only pulls branches we don't have yet
+		○ git status
+			§ View current state of repository
+			§ Any file mods/adds will be displayed
+		○ git add
+			§ Start tracking a file
+		○ git commit
+			§ Builds tree from staging area and adds commit to database
