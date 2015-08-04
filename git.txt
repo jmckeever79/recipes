@@ -111,3 +111,4 @@
 			§ Start tracking a file
 		○ git commit
 			§ Builds tree from staging area and adds commit to database
+			§ -m [message] will specify commit inline; otherwise default text editor will be opened
