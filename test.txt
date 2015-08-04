@@ -1,1 +1,3 @@
 Here is the file I am using to test my understanding of git.
+
+Making a random amendment.
